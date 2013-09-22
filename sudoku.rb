@@ -3,6 +3,7 @@ require 'sinatra-partial'
 set :partial_template_engine, :erb
 require 'rack-flash3'
 use Rack::Flash
+set :session_secret, "I'm the secret key to sign the cookie"
 require_relative './lib/sudoku'
 require_relative './lib/cell'
 require_relative './helpers/application'
