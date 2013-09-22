@@ -20,4 +20,10 @@ body {
 	font-family: Arial;
 }
 
+.incorrect {
+	background-color: yellow;
+}
 
+.value-provided {
+	background-color: #DDD;
+}

@@ -1,17 +1,18 @@
 require 'sinatra'
 require_relative './lib/sudoku'
 require_relative './lib/cell'
+require_relative './helpers/application'
 
 enable :sessions
 
-get '/' do
-	session[:last_visit] = Time.now.to_s
-	"Last visit time has been recorded"
-end
+# get '/' do
+# 	session[:last_visit] = Time.now.to_s
+# 	"Last visit time has been recorded"
+# end
 
-get '/last-visit' do
-	"Previous visit to homepage: #{session[:last_visit]}"
-end
+# get '/last-visit' do
+# 	"Previous visit to homepage: #{session[:last_visit]}"
+# end
 
 def random_sudoku
 	seed = (1..9).to_a.shuffle + Array.new(81-9, 0)
@@ -20,14 +21,29 @@ def random_sudoku
 	sudoku.to_s.chars
 end
 
-def puzzle(sudoku)
+def puzzle(sudoku) #need to implement this
 	sudoku
 end
 
-get '/' do
+def generate_new_puzzle_if_necessary
+	return if session[:current_solution]
 	sudoku = random_sudoku
 	session[:solution] = sudoku
-	@current_solution = puzzle(sudoku)
+	session[:puzzle] = puzzle(sudoku)
+	session[:current_solution] = session[:puzzle]
+end
+
+def prepare_to_check_solution
+	@check_solution = session[:check_solution]
+	session[:check_solution] = nil
+end
+
+get '/' do
+	prepare_to_check_solution
+	generate_new_puzzle_if_necessary
+	@current_solution = session[:current_solution] || session[:puzzle]
+	@solution = session[:solution]
+	@puzzle = session[:puzzle]
 	erb :index
 end
 
@@ -36,7 +52,15 @@ get '/solution' do
 	erb :index
 end
 
-# get '/' do
-# 	@current_solution = random_sudoku
-# 	erb :index
-# end
+post '/' do
+	cells = params["cell"]
+	session[:current_solution] = cells.map{|value| value.to_i}.join
+	session[:check_solution] = true
+	redirect to("/")
+end
+
+
+
+
+
+
