@@ -25,8 +25,14 @@ def random_sudoku
 	sudoku.to_s.chars
 end
 
-def puzzle(sudoku) #need to implement this
-	sudoku.map {|v| rand < 0.3 ? 0 : v}
+def puzzle(sudoku) #need to implement this. taken from sam and dave.
+	random = (0..81).to_a.sample(25)
+	@puzzled = [ ] 
+	sudoku.each_with_index do |element, index|
+		if random.include?(index) then @puzzled.push(0)
+		else @puzzled.push(element) end
+		end
+		@puzzled
 end
 
 def generate_new_puzzle_if_necessary
